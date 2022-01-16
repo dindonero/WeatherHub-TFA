@@ -1,7 +1,10 @@
 import datetime
+import time
 
 import requests, json
 import pandas as pd
+
+hours = 2.5
 
 url = 'https://www.data199.com/api/v1/device'
 
@@ -19,8 +22,8 @@ data = {
     'usemm': 'true',
     'speedunit': 0,
     'ccon': 'false',
-    'timestamp': 1642162415,
-    'requesttoken': '005462843922b432596d243f49845f88',
+    'timestamp': 1642335704,
+    'requesttoken': 'e4fd020f920449751dc4887f5a333f94',
     'deviceid': '117E0D7623A8',
     'measurementfrom': 0,
     'measurementcount': 50
@@ -30,16 +33,22 @@ def saveToCSV(lastMeasurement):
 
     df = pd.DataFrame(lastMeasurement, index=[0])
 
-    df.to_csv('miguelito.csv', mode='a', index=False, header=True)
+    df.to_csv('miguelito.csv', mode='a', index=False, header=False)
 
 
 if __name__ == '__main__':
 
-    response = requests.post(url, data=data)
+    while True:
 
-    lastMeasurement = json.loads(response.text)['result']['devices'][0]['measurements'][0]
+        response = requests.post(url, data=data)
 
-    lastMeasurement['datetime'] = datetime.datetime.fromtimestamp(lastMeasurement['ts'])
+        lastMeasurement = json.loads(response.text)['result']['devices'][0]['measurements'][0]
 
-    saveToCSV(lastMeasurement)
+        lastMeasurement['datetime'] = datetime.datetime.fromtimestamp(lastMeasurement['ts'])
+
+        saveToCSV(lastMeasurement)
+
+        print('Read measure at ' + str(datetime.datetime.fromtimestamp(lastMeasurement['ts'])))
+
+        time.sleep(hours*60*60)
 
