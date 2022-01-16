@@ -26,7 +26,6 @@ if __name__ == '__main__':
 
         response = requests.post(url, data='deviceids=117E0D7623A8', headers=headers)
 
-        print(response.text)
         lastMeasurement = json.loads(response.text)['devices'][0]['measurement']
 
         lastMeasurement['datetime'] = datetime.datetime.fromtimestamp(lastMeasurement['ts'])
